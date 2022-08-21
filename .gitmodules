@@ -1,0 +1,4 @@
+[submodule "tinderbox-cluster-riscv"]
+	path = tinderbox-cluster-riscv
+	url = git@github.com:FurudeRikaLiveOnHinami/tinderbox-cluster.git
+	branch = tinderbox-cluster-riscv
