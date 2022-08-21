@@ -15,9 +15,11 @@ COPY portage_config/package.use /etc/portage/package.use
 COPY portage_config/package.accept_keywords /etc/portage/package.accept_keywords
 
 RUN cat /make.conf >> /etc/portage/make.conf \
-    && emerge -qv dev-vcs/git \
+    && emerge --noreplace --update --with-bdeps=y --jobs=16 dev-vcs/git \
+                  dev-lang/rust-bin \
                   www-client/pybugz \
                   dev-python/GitPython dev-python/pygit2 \
+                  dev-python/psycopg:2 \
                   dev-python/requests \
                   dev-python/txrequests \
                   dev-util/buildbot \
@@ -29,8 +31,11 @@ COPY tinderbox-cluster-riscv /tinderbox-cluster
 COPY buildbot_config/master.cfg /tinderbox-cluster/master.cfg
 COPY buildbot_config/gentooci.cfg /tinderbox-cluster/gentooci.cfg
 COPY buildbot_config/logparser.json /tinderbox-cluster/logparser.json
-
+COPY buildbot_config/alembic.ini /tinderbox-cluster/buildbot_gentoo_ci/db/migrations/alembic.ini
+COPY secrets /var/lib/buildmaster/gentooci-cloud/secrets/
 COPY entrypoint.sh /entrypoint.sh
 
+RUN rm /tinderbox-cluster/.git
+
 EXPOSE 8010 9989
-ENTRYPOINT ['/entrypoint.sh']
+ENTRYPOINT ["/entrypoint.sh"]
