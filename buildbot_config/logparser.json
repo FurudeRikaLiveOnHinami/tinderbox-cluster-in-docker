@@ -1,0 +1,1 @@
+{"database": "postgresql+psycopg2://gentooci:riscv@db/gentooci", "default_uuid" : "log_parser", "core" : "2" }
