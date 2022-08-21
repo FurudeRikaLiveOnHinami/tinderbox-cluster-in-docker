@@ -1,0 +1,11 @@
+dev-util/buildbot ~amd64
+dev-util/buildbot-badges ~amd64
+dev-util/buildbot-console-view ~amd64
+dev-util/buildbot-grid-view ~amd64
+dev-util/buildbot-waterfall-view ~amd64
+dev-util/buildbot-wsgi-dashboards ~amd64
+dev-util/buildbot-www ~amd64
+dev-util/buildbot-pkg ~amd64
+dev-python/klein ~amd64
+dev-python/tubes ~amd64
+dev-python/txrequests ~amd64
