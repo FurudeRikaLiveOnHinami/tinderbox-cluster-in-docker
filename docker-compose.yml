@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  buildbot:
+    image: tinderbox-cluster:latest
+    ports:
+      - "8010:8010"
+      - "9989:9989"
+    links:
+      - postgresql:db
+    depends_on:
+      - postgresql
+  postgresql:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
