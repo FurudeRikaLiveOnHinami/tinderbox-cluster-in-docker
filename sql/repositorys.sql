@@ -24,7 +24,7 @@ SET row_security = off;
 -- Data for Name: repositorys; Type: TABLE DATA; Schema: public; Owner: buildbot
 --
 
-INSERT INTO public.repositorys VALUES ('gentoo', 'Gentoo main repo', 'https://github.com/gentoo/gentoo.git', true, true, true, 'gitpuller', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb');
+INSERT INTO public.repositorys VALUES ('gentoo', 'Gentoo main repo', 'https://github.com/gentoo/gentoo.git', true, true, true, 'git', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb');
 
 
 -- Completed on 2022-01-24 01:20:01 CET
