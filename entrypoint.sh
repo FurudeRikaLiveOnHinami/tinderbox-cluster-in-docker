@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-while pg_isready -d gentooci -h db -U gentooci; [ $? -ne 0 ]; do
+while pg_isready -d gentooci -h db -U gentooci > /dev/null; [ $? -ne 0 ]; do
   sleep 1
 done
 

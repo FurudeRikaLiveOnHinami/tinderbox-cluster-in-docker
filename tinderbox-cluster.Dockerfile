@@ -8,21 +8,27 @@ COPY tinderbox-cluster-riscv /tinderbox-cluster
 # COPY secrets /var/lib/buildmaster/gentooci-cloud/secrets/
 COPY entrypoint.sh /entrypoint.sh
 
-ARG gentoo_ci_db_user="gentoo-ci"
-ARG gentoo_ci_db_password="gentoo-ci"
-ARG gentoo_ci_db_name="gentoo-ci"
+ARG gentoo_ci_db_user="gentooci"
+ARG gentoo_ci_db_password="riscv"
+ARG gentoo_ci_db_name="gentooci"
 ARG gentoo_ci_db_host="db"
+ARG repourl="https://git.onfoo.top/Chi-Tan-Da-Eru/gentoo.git"
 
-RUN rm /tinderbox-cluster/.git \
-    && sed -Ei.bak "s/'password' : 'X\?'/'password' : 'riscv'/" /tinderbox-cluster/master.cfg
-    && sed -Ei.bak "s|postgresql+psycopg2://user:password@host/gentoo-ci|postgresql+psycopg2://$gentoo_ci_db_user:$gentoo_ci_db_password@gentoo_ci_db_host/gentoo_ci_db_name|" /tinderbox-cluster/logparser.json \
-    && sed -Ei.bak "s|postgresql://buildbot:password@ip/gentoo-ci|postgresql://$gentoo_ci_db_user:$gentoo_ci_db_password@$gentoo_ci_db_host/$gentoo_ci_db_name" /tinderbox-cluster/gentooci.cfg \
-    && sed -Ei.bak "s|driver://user:pass@localhost/dbname|postgresql://$gentoo_ci_db_user:$gentoo_ci_db_password@$gentoo_ci_db_host/$gentoo_ci_db_name|" /tinderbox-cluster/buildbot_gentoo_ci/db/migrations/alembic.ini \
-    && sed -Ei.bak "s|repourl='https://gitlab.gentoo.org/zorry/gentoo-ci.git'|repourl='https://git.onfoo.top/Chi-Tan-Da-Eru/gentoo.git'|" /tinderbox-cluster/buildbot_gentoo_ci/config/change_source.py \
-    && diff -u --color /tinderbox-cluster/master.cfg /tinderbox-cluster/master.cfg.bak \
-    && diff -u --color /tinderbox-cluster/logparser.json /tinderbox-cluster/logparser.json.bak \
-    && diff -u --color /tinderbox-cluster/logparser.json /tinderbox-cluster/gentooci.cfg.bak \
-    && diff -u --color /tinderbox-cluster/buildbot_gentoo_ci/db/migrations/alembic.ini /tinderbox-cluster/buildbot_gentoo_ci/db/migrations/alembic.ini.bak \
+WORKDIR /tinderbox-cluster
 
+RUN rm .git \
+    && sed -i.bak "s/'password' : 'X\?'/'password' : 'riscv'/" master.cfg \
+    && sed -i.bak "s|postgresql://buildbot:X@192.0.0.0/buildbot|postgresql://buildbot:riscv@db/buildbot|" master.cfg \
+    && sed -i.bak "/#c\['change_source'\] = change_source.gentoo_change_source()/s/#//" master.cfg \
+    && sed -i.bak "/c\['services'\] = reporters.gentoo_reporters(r=c\['services'\])/s/^/#/" master.cfg \
+    && sed -i.bak "s|postgresql+psycopg2://user:password@host/gentoo-ci|postgresql+psycopg2://$gentoo_ci_db_user:$gentoo_ci_db_password@$gentoo_ci_db_host/$gentoo_ci_db_name|" logparser.json \
+    && sed -i.bak "s|postgresql://buildbot:password@ip/gentoo-ci|postgresql://$gentoo_ci_db_user:$gentoo_ci_db_password@$gentoo_ci_db_host/$gentoo_ci_db_name|" gentooci.cfg \
+    && sed -i.bak "s|driver://user:pass@localhost/dbname|postgresql://$gentoo_ci_db_user:$gentoo_ci_db_password@$gentoo_ci_db_host/$gentoo_ci_db_name|" buildbot_gentoo_ci/db/migrations/alembic.ini \
+    && sed -i.bak -e "s|repourl='https://gitlab.gentoo.org/zorry/gentoo-ci.git'|repourl='$repourl'|" buildbot_gentoo_ci/config/change_source.py \
+    && sed -i.bak -e "/project='gentoo-ci'/a category='push'" buildbot_gentoo_ci/config/change_source.py \
+    && sed -i.bak -e "/project='gentoo-ci'/s/^/#/" buildbot_gentoo_ci/config/change_source.py \
+    && sed -i.bak "/minio/s/^/#/" buildbot_gentoo_ci/steps/logs.py \
+    && sed -i.bak "/f.addStep(logs.MakeIssue())/s/^/#/" buildbot_gentoo_ci/config/buildfactorys.py \
+    && mkdir /var/lib/buildmaster/gentoo-ci-cloud/secrets -p 
 EXPOSE 8010 9989
 ENTRYPOINT ["/entrypoint.sh"]
